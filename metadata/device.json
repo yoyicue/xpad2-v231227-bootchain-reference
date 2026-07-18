@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "product": "TALIH-PD2",
   "family": "XPad2",
   "platform": "ls12_mt8797_wifi_64",
@@ -102,7 +102,12 @@
       "original_partition": "lk_a",
       "lk_build_id": "ls12_mt8797_wifi_64-45596c65-20240417181119-20240813021105",
       "provisional_version": "suspected V240813",
-      "confidence": "medium",
+      "version_status": "high-confidence inference",
+      "build_incremental": "1723478295",
+      "incremental_status": "confirmed by boot_a, vbmeta_a, vbmeta_system_a, and vbmeta_vendor_a signed descriptors",
+      "incremental_timestamp_cst": "2024-08-12 23:58:15",
+      "confidence": "high",
+      "slot_role": "retained older slot A",
       "bytes": 8388608,
       "sha256": "ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf"
     },
@@ -110,8 +115,13 @@
       "release_asset": "lk_b-build-20241216-observed.img",
       "original_partition": "lk_b",
       "lk_build_id": "ls12_mt8797_wifi_64-dfde152c-20241118095326-20241216233205",
-      "provisional_version": "V241216-era",
-      "confidence": "high",
+      "version": "V241216",
+      "version_status": "confirmed",
+      "build_incremental": "19",
+      "system_ui_version": "V2.4.0",
+      "system_ui_version_source": "dump provider report",
+      "slot_role": "current system slot B",
+      "evidence": "current system properties plus boot_b, vbmeta_b, vbmeta_system_b, and vbmeta_vendor_b signed descriptors",
       "bytes": 8388608,
       "sha256": "c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419"
     }
@@ -132,6 +142,7 @@
     },
     {
       "tag": "ls12-lk-2024-observed-r1",
+      "display_name": "XPad2 LS12 V241216 Boot Chain r1",
       "assets": [
         "lk_a-build-20240813-observed.img",
         "lk_b-build-20241216-observed.img"

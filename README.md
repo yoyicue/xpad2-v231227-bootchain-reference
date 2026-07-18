@@ -15,7 +15,7 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 | 旧内核 | `4.19.191+`，2023-12-27 构建 |
 | 已确认中间版本 | V260523，incremental `239`，官方 OTA 与设备 A 槽交叉验证 |
 | 受限 Fastboot 固件 | V260629，incremental `260`，官方 OTA 与设备 B 槽交叉验证 |
-| 补充样本 | 2024-08-13 与 2024-12-16 构建的 LS12 LK，版本归属暂定 |
+| V241216 混合槽位样本 | 当前 B 槽：V241216 / incremental `19`；旧 A 槽：疑似 V240813 / incremental `1723478295` |
 
 这些资料不能跨型号直接使用。即使 SoC 相同，DRAM、UFS、PMIC、显示面板、
 签名链和分区布局也可能不同。
@@ -29,8 +29,8 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
   `boot`、`continue`、`reboot-bootloader`、`reboot-fastboot` 和 `set_active:`。
 - 该 V260629 LK 不再包含标准 `flash:`、`erase:` 命令字符串；这证明标准命令
   入口未注册，不代表所有底层存储写入辅助函数都被移除。
-- 两份 2024 LS12 观察样本均保留标准 `flash:`、`erase:` 命令入口，但它们来自
-  混合槽位整机备份，不能仅凭归档目录名认定为 V260213。
+- V241216 当前 B 槽和保留旧 A 槽的 LK 均保留标准 `flash:`、`erase:`；B 槽
+  V241216 / incremental `19` 已确认，A 槽高度疑似 V240813。
 - 版本号已确认的 V260523 LK 也保留 `flash:`、`erase:`；官方 OTA 中的 LK
   补零到 8 MiB 后，与设备 A 槽实读镜像逐字节相同。
 - 截至现有已确认样本，V260523 是最后一个仍保留这两个标准 Fastboot 命令
@@ -49,8 +49,8 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 | `preloader_raw_b.img` | 4,190,208 | `ee05973a30f3fd4a6f1ca344856784f96e7a6b630333ba25dc776205d3713f11` | 与 A 相同 |
 | `lk_a.img` | 8,388,608 | `a87979a827c005107c68395c88396ce14a418dff0a23f89d473797e1476b3296` | V231227 有效旧 LK |
 | `lk_b.img` | 8,388,608 | `2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74` | V231227 全零，禁止使用 |
-| `lk_a-build-20240813-observed.img` | 8,388,608 | `ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf` | 疑似 V240813；观察样本 |
-| `lk_b-build-20241216-observed.img` | 8,388,608 | `c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419` | V241216 时期；观察样本 |
+| `lk_a-build-20240813-observed.img` | 8,388,608 | `ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf` | 旧 A 槽；incremental `1723478295`，高度疑似 V240813 |
+| `lk_b-build-20241216-observed.img` | 8,388,608 | `c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419` | 当前 B 槽；V241216 / incremental `19` 已确认 |
 | `preloader_raw_a-v260523.img` | 4,190,208 | `97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b` | V260523，版本号已确认 |
 | `lk_a-v260523.img` | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` | V260523，版本号已确认 |
 | `preloader_raw_b-v260629.img` | 4,190,208 | `76e76d566b48d21387daabc7cbd2e972782995cebd4c07cd01cc5e3e823636f4` | V260629，版本号已确认 |
@@ -118,21 +118,28 @@ B 槽实读。OTA 中 495,616 字节的 preloader 和 1,257,472 字节的 LK 分
 到 mapper raw / LK 分区大小后，均与设备实读哈希完全一致。preloader 附件是
 4,190,208 字节 mapper raw 形式，不是 boot-LUN dump。
 
-## LS12 2024 LK 观察样本
+## V241216 当前系统与旧 A 槽 LK
 
 [`ls12-lk-2024-observed-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-2024-observed-r1)
-提供两份来自同一混合槽位整机备份的 LK 观察样本：
+展示名称为 **XPad2 LS12 V241216 Boot Chain r1**，提供同一整机 dump 中当前
+B 槽与保留旧 A 槽的两份 LK：
 
-| 附件 | 原分区名 | 内部构建日期 | 版本判断 |
+| 附件 | 原分区 | incremental | 版本判断 |
 | --- | --- | --- | --- |
-| [`lk_a-build-20240813-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_a-build-20240813-observed.img) | `lk_a` | 2024-08-13 | 疑似 V240813，置信度中 |
-| [`lk_b-build-20241216-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_b-build-20241216-observed.img) | `lk_b` | 2024-12-16 | V241216 时期，置信度高 |
+| [`lk_a-build-20240813-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_a-build-20240813-observed.img) | 旧 `lk_a` | `1723478295` | 高度疑似 V240813 |
+| [`lk_b-build-20241216-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_b-build-20241216-observed.img) | 当前 `lk_b` | `19` | V241216 已确认 |
 
-归档中的系统属性为 `ro.genie.gota.version=V241216`，并且 `lk_b`、`boot_b`、
-`vendor_b` 的构建时间一致落在 2024-12-16；`lk_a` 只有内部 Build ID 支持
-2024-08-13 这一时间点。该来源不是带 OTA metadata 的官方升级包，因此 Release
-使用 `observed` 命名，不把疑似版本写成已经证实的固件归属。取得更多来源证据后，
-可以更新标签和说明，镜像本身仍以 SHA-256 作为稳定身份。
+当前系统属性直接报告 `ro.genie.gota.version=V241216` 和
+`ro.build.version.incremental=19`；`boot_b`、`vbmeta_b`、`vbmeta_system_b`、
+`vbmeta_vendor_b` 的签名描述符也均使用 incremental `19`，其构建时间与 `lk_b`
+一致落在 2024-12-16。dump 提供者确认系统界面显示版本为 `V2.4.0`；这是人工来源
+的 UI 产品版本，和镜像内确认的 V241216 / incremental `19` 分开记录。
+
+旧 A 槽的 `boot_a`、`vbmeta_a`、`vbmeta_system_a`、`vbmeta_vendor_a` 均记录
+incremental `1723478295`，对应 2024-08-12 23:58:15 CST；`lk_a` 最终构建于
+2024-08-13 02:11:05。它与 V231227 一样使用 Unix 时间戳式 incremental，因而
+高度吻合 V240813，但尚未找到 A 侧直接的 `ro.genie.gota.version=V240813`。
+文件继续使用 `observed` 命名，SHA-256 仍是稳定身份。
 
 ## 从自己的设备提取
 

@@ -17,8 +17,8 @@ separate release assets. No flashing automation is included.
   between the official OTA and device slot A
 - Restricted-Fastboot firmware: V260629, incremental `260`, cross-checked
   between the official OTA and device slot B
-- Additional samples: LS12 LK builds dated 2024-08-13 and 2024-12-16, with
-  provisional version attribution
+- V241216 mixed-slot sample: current slot B is confirmed as V241216 / incremental
+  `19`; retained slot A is suspected V240813 / incremental `1723478295`
 
 These files are not portable to another model merely because it uses the same SoC.
 DRAM, UFS, PMIC, panel, partition layout, rollback state, and signing roots can all
@@ -34,9 +34,9 @@ differ.
   commands, but no longer contains the canonical `flash:` or `erase:` command
   strings. This establishes that the standard command entries are absent; it does
   not establish that every low-level storage-write helper was removed.
-- Both 2024 LS12 observation samples retain `flash:` and `erase:`, but they came
-  from a mixed-slot device backup and must not be identified as V260213 merely
-  from the archive directory name.
+- The current V241216 slot-B LK and retained older slot-A LK both preserve
+  `flash:` and `erase:`. Slot B is confirmed as V241216 / incremental `19`;
+  slot A is strongly suspected V240813.
 - The confirmed V260523 LK also retains `flash:` and `erase:`. Zero-padding the
   official OTA LK to the 8 MiB partition size exactly reproduces the slot-A
   image read from the device.
@@ -113,22 +113,30 @@ from two devices. Zero-padding the 495,616-byte OTA preloader and 1,257,472-byte
 OTA LK to their mapper raw / partition sizes exactly reproduces the device hashes.
 The preloader asset is the 4,190,208-byte mapper raw form, not a boot-LUN dump.
 
-## LS12 2024 LK observation samples
+## V241216 current system and retained slot-A LK
 
 The [`ls12-lk-2024-observed-r1` release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-2024-observed-r1)
-contains two LK samples from one mixed-slot device backup:
+is displayed as **XPad2 LS12 V241216 Boot Chain r1** and contains the current
+slot-B LK plus the retained older slot-A LK from one device dump:
 
-| Asset | SHA-256 | Internal build date | Provisional attribution |
+| Asset | Original partition | Incremental | Attribution |
 | --- | --- | --- | --- |
-| [`lk_a-build-20240813-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_a-build-20240813-observed.img) | `ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf` | 2024-08-13 | suspected V240813, medium confidence; original `lk_a` |
-| [`lk_b-build-20241216-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_b-build-20241216-observed.img) | `c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419` | 2024-12-16 | V241216-era, high confidence; original `lk_b` |
+| [`lk_a-build-20240813-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_a-build-20240813-observed.img) | retained `lk_a` | `1723478295` | suspected V240813, high confidence |
+| [`lk_b-build-20241216-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_b-build-20241216-observed.img) | current `lk_b` | `19` | confirmed V241216 |
 
-The paired system reports `ro.genie.gota.version=V241216`, and the `lk_b`,
-`boot_b`, and `vendor_b` build times converge on 2024-12-16. Only the internal
-Build ID supports the 2024-08-13 attribution for `lk_a`. The source is not an OTA
-package with authoritative update metadata, so the assets use `observed` naming.
-Their SHA-256 values remain the stable identities if later evidence refines the
-version labels.
+The current system directly reports `ro.genie.gota.version=V241216` and
+`ro.build.version.incremental=19`. Signed descriptors in `boot_b`, `vbmeta_b`,
+`vbmeta_system_b`, and `vbmeta_vendor_b` also use incremental `19`, and their
+dates converge with `lk_b` on 2024-12-16. The dump provider reports the UI version
+as `V2.4.0`; this human-sourced product version is recorded separately from the
+image-confirmed V241216 / incremental `19` identity.
+
+Signed descriptors in `boot_a`, `vbmeta_a`, `vbmeta_system_a`, and
+`vbmeta_vendor_a` consistently record incremental `1723478295`, corresponding to
+2024-08-12 23:58:15 CST. The `lk_a` final Build ID is dated 2024-08-13 02:11:05.
+This strongly supports V240813, but no direct slot-A
+`ro.genie.gota.version=V240813` string has been recovered. Asset names retain
+`observed`, and SHA-256 remains their stable identity.
 
 ## Owner extraction
 

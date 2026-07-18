@@ -2,8 +2,10 @@
 
 The Git source tree excludes OEM preloader and LK binary images. The `v231227-r2`
 GitHub Release separately provides the V231227 `preloader_raw_a.img` and
-`lk_a.img` reference images. The `ls12-lk-2024-observed-r1` release provides two
-additional LK observation samples with provisional version attribution. The
+`lk_a.img` reference images. The `ls12-lk-2024-observed-r1` release is displayed
+as XPad2 LS12 V241216 Boot Chain r1 and provides the confirmed current-system
+V241216 / incremental 19 `lk_b` together with a retained older `lk_a` whose
+incremental 1723478295 is confirmed and V240813 attribution remains inferred. The
 `ls12-lk-v260523-r1` release combines version-confirmed V260523 preloader and LK
 samples. The `ls12-v260629-restricted-fastboot-r1` release provides the confirmed
 V260629 preloader and the LK with its standard Fastboot `flash:` / `erase:` command
