@@ -13,6 +13,7 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 | SoC 家族 | MediaTek MT8797 |
 | 旧固件 | V231227 / Android 13 |
 | 旧内核 | `4.19.191+`，2023-12-27 构建 |
+| 已确认中间版本 | V260523，incremental `239`，官方 OTA 与设备 A 槽交叉验证 |
 | 对比固件 | V260629，incremental `260`，设备 B 槽实读 |
 | 补充样本 | 2024-08-13 与 2024-12-16 构建的 LS12 LK，版本归属暂定 |
 
@@ -30,6 +31,10 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
   入口未注册，不代表所有底层存储写入辅助函数都被移除。
 - 两份 2024 LS12 观察样本均保留标准 `flash:`、`erase:` 命令入口，但它们来自
   混合槽位整机备份，不能仅凭归档目录名认定为 V260213。
+- 版本号已确认的 V260523 LK 也保留 `flash:`、`erase:`；官方 OTA 中的 LK
+  补零到 8 MiB 后，与设备 A 槽实读镜像逐字节相同。
+- 因此目前只能把 LS12 标准写入/擦除入口的移除区间收窄到 V260523 至
+  V260629 之间，不能笼统地称为“V260 全部阉割”。
 - LK 分区大小和 A/B 布局未改变；变化发生在 LK 程序和签名内容中。
 
 详细证据见 [LK 差异报告](reports/lk-v231227-vs-v260.md)。
@@ -44,6 +49,7 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 | `lk_b.img` | 8,388,608 | `2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74` | V231227 全零，禁止使用 |
 | `lk_a-build-20240813-observed.img` | 8,388,608 | `ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf` | 疑似 V240813；观察样本 |
 | `lk_b-build-20241216-observed.img` | 8,388,608 | `c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419` | V241216 时期；观察样本 |
+| `lk_a-v260523.img` | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` | V260523，版本号已确认 |
 | `lk_b-v260629-observed.img` | 8,388,608 | `4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e` | V260629 设备实读对比哈希，不分发镜像 |
 
 机器可读版本见 [bootchain-hashes.tsv](metadata/bootchain-hashes.tsv)。
@@ -62,6 +68,21 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 `lk_b.img` 不能使用，也不会发布。这里的 `preloader_raw_a.img` 是 mapper
 读取所得的 4,190,208 字节 raw 镜像，不是 4,194,304 字节的 boot-LUN dump，
 两种格式不能按文件名猜测或混用。
+
+## V260523 LK 下载
+
+[`ls12-lk-v260523-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-v260523-r1)
+提供版本号已确认的 [`lk_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/lk_a-v260523.img)：
+
+| 附件 | 字节 | SHA-256 |
+| --- | ---: | --- |
+| `lk_a-v260523.img` | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` |
+
+版本证据来自 V260523 官方 A/B OTA（incremental `239`）和 LK 内部 Build ID
+`ls12_mt8797_wifi_64-dfde152c-20241118095326-20260523165450`。OTA payload
+中的原始 `lk.img` 为 1,261,568 字节，SHA-256 为
+`9e987c2359982f0b2cabbf1e0fb756dd156d3af67f5cb8c423bad3fc9cd2139d`；按分区
+格式补零到 8 MiB 后，与设备 A 槽实读镜像哈希完全一致。
 
 ## LS12 2024 LK 观察样本
 

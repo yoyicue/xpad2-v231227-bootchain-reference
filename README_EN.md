@@ -13,6 +13,8 @@ separate release assets. No flashing automation is included.
 - Platform: `ls12_mt8797_wifi_64`
 - SoC family: MediaTek MT8797
 - Legacy firmware: V231227, Android 13
+- Confirmed intermediate firmware: V260523, incremental `239`, cross-checked
+  between the official OTA and device slot A
 - Compared firmware: V260629, incremental `260`, observed from device slot B
 - Additional samples: LS12 LK builds dated 2024-08-13 and 2024-12-16, with
   provisional version attribution
@@ -34,6 +36,11 @@ differ.
 - Both 2024 LS12 observation samples retain `flash:` and `erase:`, but they came
   from a mixed-slot device backup and must not be identified as V260213 merely
   from the archive directory name.
+- The confirmed V260523 LK also retains `flash:` and `erase:`. Zero-padding the
+  official OTA LK to the 8 MiB partition size exactly reproduces the slot-A
+  image read from the device.
+- The removal is therefore currently bounded to the interval after V260523 and
+  by V260629; it is inaccurate to describe every V260 build as restricted.
 - The A/B LK partition sizes and layout did not change.
 
 See [the LK comparison](reports/lk-v231227-vs-v260.md) and
@@ -53,6 +60,23 @@ contains exactly these firmware assets:
 all-zero V231227 `lk_b.img` is unusable and is not published. The released
 `preloader_raw_a.img` is the 4,190,208-byte raw mapper read, not the 4,194,304-byte
 boot-LUN dump; do not infer a write format from its filename or mix the two forms.
+
+## V260523 LK download
+
+The [`ls12-lk-v260523-r1` release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-v260523-r1)
+provides the version-confirmed
+[`lk_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/lk_a-v260523.img):
+
+| Asset | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `lk_a-v260523.img` | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` |
+
+The version is supported by the official V260523 A/B OTA (incremental `239`)
+and LK Build ID
+`ls12_mt8797_wifi_64-dfde152c-20241118095326-20260523165450`. The OTA payload
+`lk.img` is 1,261,568 bytes with SHA-256
+`9e987c2359982f0b2cabbf1e0fb756dd156d3af67f5cb8c423bad3fc9cd2139d`.
+Zero-padding it to 8 MiB exactly matches the device slot-A partition image.
 
 ## LS12 2024 LK observation samples
 
@@ -90,9 +114,9 @@ vendor logs, raw GPT images, unique GUIDs, serial numbers, MAC addresses, or
 calibration data.
 
 Repository-authored documentation and tools are MIT-licensed. OEM firmware remains
-the property of its respective rights holders and the two release assets are not
+the property of its respective rights holders and release assets are not
 MIT-licensed. Other OEM firmware and device-unique data are outside the scope of
-this release.
+these releases.
 
 Writing preloader or LK is a high-risk operation. A correct checksum does not make
 these images portable across products or board revisions, and a wrong preloader

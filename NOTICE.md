@@ -3,8 +3,9 @@
 The Git source tree excludes OEM preloader and LK binary images. The `v231227-r2`
 GitHub Release separately provides the V231227 `preloader_raw_a.img` and
 `lk_a.img` reference images. The `ls12-lk-2024-observed-r1` release provides two
-additional LK observation samples with provisional version attribution. All are
-identified by SHA-256 in `metadata/bootchain-hashes.tsv`.
+additional LK observation samples with provisional version attribution. The
+`ls12-lk-v260523-r1` release provides one version-confirmed V260523 LK sample.
+All are identified by SHA-256 in `metadata/bootchain-hashes.tsv`.
 
 The included SHA-256 values identify firmware observed on an owned TALIH-PD2 / XPad2
 and are provided for interoperability, recovery research, and integrity checks.
