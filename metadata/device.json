@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "product": "TALIH-PD2",
   "family": "XPad2",
   "platform": "ls12_mt8797_wifi_64",
@@ -21,6 +21,13 @@
     "device_serial_included": false,
     "disk_guids_included": false,
     "device_unique_partitions_included": false,
-    "firmware_blobs_included": false
+    "firmware_blobs_in_git_tree": false
+  },
+  "binary_release": {
+    "tag": "v231227-r2",
+    "assets": [
+      "preloader_raw_a.img",
+      "lk_a.img"
+    ]
   }
 }
