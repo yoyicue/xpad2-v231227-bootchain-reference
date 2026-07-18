@@ -58,10 +58,10 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 
 机器可读版本见 [bootchain-hashes.tsv](metadata/bootchain-hashes.tsv)。
 
-## V231227 镜像下载
+## V231227 LS12 启动链下载
 
 [`v231227-r2` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/v231227-r2)
-提供以下两个附件：
+展示名称为 **XPad2 LS12 V231227 boot-chain images r2**，提供以下两个附件：
 
 | 附件 | 字节 | SHA-256 |
 | --- | ---: | --- |

@@ -49,10 +49,11 @@ differ.
 See [the LK comparison](reports/lk-v231227-vs-v260.md) and
 [machine-readable hashes](metadata/bootchain-hashes.tsv).
 
-## V231227 image downloads
+## V231227 LS12 boot-chain downloads
 
 The [`v231227-r2` release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/v231227-r2)
-contains exactly these firmware assets:
+is displayed as **XPad2 LS12 V231227 boot-chain images r2** and contains these
+firmware assets:
 
 | Asset | Bytes | SHA-256 |
 | --- | ---: | --- |

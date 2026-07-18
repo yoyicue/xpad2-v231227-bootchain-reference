@@ -135,6 +135,7 @@
   "binary_releases": [
     {
       "tag": "v231227-r2",
+      "display_name": "XPad2 LS12 V231227 boot-chain images r2",
       "assets": [
         "preloader_raw_a.img",
         "lk_a.img"
