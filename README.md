@@ -14,7 +14,7 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 | 旧固件 | V231227 / Android 13 |
 | 旧内核 | `4.19.191+`，2023-12-27 构建 |
 | 已确认中间版本 | V260523，incremental `239`，官方 OTA 与设备 A 槽交叉验证 |
-| 对比固件 | V260629，incremental `260`，设备 B 槽实读 |
+| 受限 Fastboot 固件 | V260629，incremental `260`，官方 OTA 与设备 B 槽交叉验证 |
 | 补充样本 | 2024-08-13 与 2024-12-16 构建的 LS12 LK，版本归属暂定 |
 
 这些资料不能跨型号直接使用。即使 SoC 相同，DRAM、UFS、PMIC、显示面板、
@@ -25,7 +25,7 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 - V231227 备份中有效的旧 LK 是 `lk_a.img`。
 - V231227 的 `lk_b.img` 是完整的 8 MiB 全零镜像，不能作为 bootloader 使用。
 - V231227 的 preloader raw A/B 镜像逐字节相同。
-- 当前观察到的 V260629 B 槽 LK 仍保留 fastboot 初始化、`getvar:`、`download:`、
+- 已确认的 V260629 B 槽 LK 仍保留 fastboot 初始化、`getvar:`、`download:`、
   `boot`、`continue`、`reboot-bootloader`、`reboot-fastboot` 和 `set_active:`。
 - 该 V260629 LK 不再包含标准 `flash:`、`erase:` 命令字符串；这证明标准命令
   入口未注册，不代表所有底层存储写入辅助函数都被移除。
@@ -53,7 +53,8 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 | `lk_b-build-20241216-observed.img` | 8,388,608 | `c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419` | V241216 时期；观察样本 |
 | `preloader_raw_a-v260523.img` | 4,190,208 | `97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b` | V260523，版本号已确认 |
 | `lk_a-v260523.img` | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` | V260523，版本号已确认 |
-| `lk_b-v260629-observed.img` | 8,388,608 | `4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e` | V260629 设备实读对比哈希，不分发镜像 |
+| `preloader_raw_b-v260629.img` | 4,190,208 | `76e76d566b48d21387daabc7cbd2e972782995cebd4c07cd01cc5e3e823636f4` | V260629，版本号已确认 |
+| `lk_b-v260629.img` | 8,388,608 | `4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e` | V260629，Fastboot 标准写入/擦除入口裁剪版 |
 
 机器可读版本见 [bootchain-hashes.tsv](metadata/bootchain-hashes.tsv)。
 
@@ -95,6 +96,27 @@ OTA payload 中的 `preloader_raw.img` 为 495,616 字节，SHA-256 为
 `cede4da9c9a4ec48914fa8eb321e686e6176617227c44df5fbe0d941c77e4aa7`；补零到
 mapper raw 格式的 4,190,208 字节后，所得发布镜像同样与设备 A 槽实读哈希
 完全一致。这里发布的是 mapper raw 形式，不是 4,194,304 字节 boot-LUN dump。
+
+## V260629 受限 Fastboot 启动链下载
+
+[`ls12-v260629-restricted-fastboot-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-v260629-restricted-fastboot-r1)
+提供版本号已确认的 V260629 preloader 与 LK：
+
+这是本文所称的“裁剪版”：LK 仍保留 Fastboot 初始化、`getvar:`、`download:`、
+`boot`、`continue`、重启和切槽等入口，但标准 `flash:`、`erase:` 命令注册入口
+已经移除。这里的“裁剪”专指标准 Fastboot 写入/擦除命令面，不表示整个
+Fastboot 或所有底层存储函数都已删除。
+
+| 附件 | 字节 | SHA-256 |
+| --- | ---: | --- |
+| [`preloader_raw_b-v260629.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-v260629-restricted-fastboot-r1/preloader_raw_b-v260629.img) | 4,190,208 | `76e76d566b48d21387daabc7cbd2e972782995cebd4c07cd01cc5e3e823636f4` |
+| [`lk_b-v260629.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-v260629-restricted-fastboot-r1/lk_b-v260629.img) | 8,388,608 | `4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e` |
+
+版本证据来自 LS12 V260629 官方 A/B OTA（incremental `260`）、LK 内部 Build ID
+`ls12_mt8797_wifi_64-405e7a01-20260602101307-20260629041106`，以及两台设备
+B 槽实读。OTA 中 495,616 字节的 preloader 和 1,257,472 字节的 LK 分别补零
+到 mapper raw / LK 分区大小后，均与设备实读哈希完全一致。preloader 附件是
+4,190,208 字节 mapper raw 形式，不是 boot-LUN dump。
 
 ## LS12 2024 LK 观察样本
 

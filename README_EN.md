@@ -15,7 +15,8 @@ separate release assets. No flashing automation is included.
 - Legacy firmware: V231227, Android 13
 - Confirmed intermediate firmware: V260523, incremental `239`, cross-checked
   between the official OTA and device slot A
-- Compared firmware: V260629, incremental `260`, observed from device slot B
+- Restricted-Fastboot firmware: V260629, incremental `260`, cross-checked
+  between the official OTA and device slot B
 - Additional samples: LS12 LK builds dated 2024-08-13 and 2024-12-16, with
   provisional version attribution
 
@@ -29,7 +30,7 @@ differ.
 - The captured V231227 `lk_b.img` is an all-zero 8 MiB partition and must not be
   treated as a bootloader image.
 - V231227 preloader raw A and B images are byte-identical.
-- The observed V260629 slot-B LK retains fastboot initialization and read/control
+- The confirmed V260629 slot-B LK retains fastboot initialization and read/control
   commands, but no longer contains the canonical `flash:` or `erase:` command
   strings. This establishes that the standard command entries are absent; it does
   not establish that every low-level storage-write helper was removed.
@@ -88,6 +89,29 @@ The OTA `preloader_raw.img` is 495,616 bytes with SHA-256
 Zero-padding it to the 4,190,208-byte mapper raw format produces the released
 image and exactly matches the device slot-A read. This is not a 4,194,304-byte
 boot-LUN dump.
+
+## V260629 restricted-Fastboot boot-chain download
+
+The [`ls12-v260629-restricted-fastboot-r1` release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-v260629-restricted-fastboot-r1)
+provides the version-confirmed V260629 preloader and LK:
+
+This is the “trimmed” sample discussed here: LK still retains Fastboot
+initialization, `getvar:`, `download:`, `boot`, `continue`, reboot, and slot-control
+entries, while the standard `flash:` and `erase:` command registrations are gone.
+“Trimmed” refers specifically to the standard Fastboot write/erase command surface;
+it does not mean that Fastboot or every low-level storage helper was removed.
+
+| Asset | Bytes | SHA-256 |
+| --- | ---: | --- |
+| [`preloader_raw_b-v260629.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-v260629-restricted-fastboot-r1/preloader_raw_b-v260629.img) | 4,190,208 | `76e76d566b48d21387daabc7cbd2e972782995cebd4c07cd01cc5e3e823636f4` |
+| [`lk_b-v260629.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-v260629-restricted-fastboot-r1/lk_b-v260629.img) | 8,388,608 | `4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e` |
+
+Identity is established by the official LS12 V260629 A/B OTA (incremental `260`),
+LK Build ID
+`ls12_mt8797_wifi_64-405e7a01-20260602101307-20260629041106`, and slot-B reads
+from two devices. Zero-padding the 495,616-byte OTA preloader and 1,257,472-byte
+OTA LK to their mapper raw / partition sizes exactly reproduces the device hashes.
+The preloader asset is the 4,190,208-byte mapper raw form, not a boot-LUN dump.
 
 ## LS12 2024 LK observation samples
 

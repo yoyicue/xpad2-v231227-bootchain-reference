@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "product": "TALIH-PD2",
   "family": "XPad2",
   "platform": "ls12_mt8797_wifi_64",
@@ -16,10 +16,23 @@
     "version": "V260629",
     "build_incremental": "260",
     "lk_build_id": "ls12_mt8797_wifi_64-405e7a01-20260602101307-20260629041106",
-    "sample_source": "read-only live-device lk_b partition",
+    "version_status": "confirmed",
+    "sample_source": "official A/B OTA payload zero-padded to partition size matches read-only lk_b from two devices",
     "active_slot_at_observation": "_b",
+    "ota_package_sha256": "7e91923c7cc28a0174d65022ae4e32e5163f8daf32eebce69bed63da6201c198",
+    "ota_lk_payload_bytes": 1257472,
+    "ota_lk_payload_sha256": "f3286d44b6b2606523244cf066378c5d5f024c233dd82d6b39aae635a2654784",
+    "release_asset": "lk_b-v260629.img",
     "partition_bytes": 8388608,
-    "partition_sha256": "4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e"
+    "partition_sha256": "4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e",
+    "fastboot_entries_present": [
+      "getvar:",
+      "download:"
+    ],
+    "fastboot_standard_write_entries_absent": [
+      "flash:",
+      "erase:"
+    ]
   },
   "confirmed_preloader_samples": [
     {
@@ -33,6 +46,18 @@
       "mapper_raw_bytes": 4190208,
       "mapper_raw_sha256": "97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b",
       "source_consistency": "official OTA payload zero-padded to mapper raw size matches read-only live-device pl_a"
+    },
+    {
+      "release_asset": "preloader_raw_b-v260629.img",
+      "original_partition": "pl_b",
+      "version": "V260629",
+      "version_status": "confirmed",
+      "ota_build_incremental": "260",
+      "ota_payload_bytes": 495616,
+      "ota_payload_sha256": "5b92e1a56ec6705194fcdbdc18559bebb2c7d743f0e832fa3e9e16ba6769203c",
+      "mapper_raw_bytes": 4190208,
+      "mapper_raw_sha256": "76e76d566b48d21387daabc7cbd2e972782995cebd4c07cd01cc5e3e823636f4",
+      "source_consistency": "official OTA payload zero-padded to mapper raw size matches read-only live-device pl_b on two devices"
     }
   ],
   "confirmed_lk_samples": [
@@ -49,6 +74,23 @@
       "partition_sha256": "6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a",
       "source_consistency": "official OTA payload zero-padded to partition size matches read-only live-device lk_a",
       "fastboot_standard_write_entries": [
+        "flash:",
+        "erase:"
+      ]
+    },
+    {
+      "release_asset": "lk_b-v260629.img",
+      "original_partition": "lk_b",
+      "version": "V260629",
+      "version_status": "confirmed",
+      "ota_build_incremental": "260",
+      "lk_build_id": "ls12_mt8797_wifi_64-405e7a01-20260602101307-20260629041106",
+      "ota_payload_bytes": 1257472,
+      "ota_payload_sha256": "f3286d44b6b2606523244cf066378c5d5f024c233dd82d6b39aae635a2654784",
+      "partition_bytes": 8388608,
+      "partition_sha256": "4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e",
+      "source_consistency": "official OTA payload zero-padded to partition size matches read-only live-device lk_b on two devices",
+      "fastboot_standard_write_entries_absent": [
         "flash:",
         "erase:"
       ]
@@ -100,6 +142,13 @@
       "assets": [
         "preloader_raw_a-v260523.img",
         "lk_a-v260523.img"
+      ]
+    },
+    {
+      "tag": "ls12-v260629-restricted-fastboot-r1",
+      "assets": [
+        "preloader_raw_b-v260629.img",
+        "lk_b-v260629.img"
       ]
     }
   ]

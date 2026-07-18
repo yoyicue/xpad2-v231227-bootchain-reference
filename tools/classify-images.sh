@@ -31,8 +31,11 @@ xpad_classify_hash() {
     97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b)
       printf 'confirmed V260523 preloader raw A'
       ;;
+    76e76d566b48d21387daabc7cbd2e972782995cebd4c07cd01cc5e3e823636f4)
+      printf 'confirmed V260629 preloader raw B'
+      ;;
     4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e)
-      printf 'observed V260629 lk_b comparison image'
+      printf 'confirmed V260629 restricted-Fastboot lk_b'
       ;;
     *)
       printf 'unknown'

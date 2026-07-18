@@ -11,4 +11,7 @@ preloader-v260523-ota-payload.img	V260523	495616	cede4da9c9a4ec48914fa8eb321e686
 preloader_raw_a-v260523.img	V260523	4190208	97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b	published-ls12-lk-v260523-r1-confirmed-version
 lk-v260523-ota-payload.img	V260523	1261568	9e987c2359982f0b2cabbf1e0fb756dd156d3af67f5cb8c423bad3fc9cd2139d	source-ota-payload-zero-padded-for-release
 lk_a-v260523.img	V260523	8388608	6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a	published-ls12-lk-v260523-r1-confirmed-version
-lk_b-v260629-observed.img	V260629	8388608	4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e	observed-live-comparison-hash-only
+preloader-v260629-ota-payload.img	V260629	495616	5b92e1a56ec6705194fcdbdc18559bebb2c7d743f0e832fa3e9e16ba6769203c	source-ota-payload-zero-padded-for-release
+preloader_raw_b-v260629.img	V260629	4190208	76e76d566b48d21387daabc7cbd2e972782995cebd4c07cd01cc5e3e823636f4	published-ls12-v260629-restricted-fastboot-r1-confirmed-version
+lk-v260629-ota-payload.img	V260629	1257472	f3286d44b6b2606523244cf066378c5d5f024c233dd82d6b39aae635a2654784	source-ota-payload-zero-padded-for-release
+lk_b-v260629.img	V260629	8388608	4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e	published-ls12-v260629-restricted-fastboot-r1-standard-flash-erase-entries-absent
