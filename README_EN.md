@@ -3,11 +3,10 @@
 This repository documents the V231227 boot chain used by TALIH-PD2 / XPad2.
 It is intended for same-model ROM, recovery, and bootloader research.
 
-The Git source tree contains sanitized metadata, known hashes, an LK comparison,
-and read-only owner-extraction tools. It contains no firmware binaries or flashing
-automation. After the maintainer confirmed authorization to redistribute them,
-two unmodified V231227 reference images are offered separately in the
-`v231227-r2` release.
+The repository contains sanitized metadata, known hashes, an LK comparison, and
+read-only owner-extraction tools. Two unmodified V231227 reference images are
+available separately in the `v231227-r2` release. No flashing automation is
+included.
 
 ## Scope
 
@@ -61,7 +60,7 @@ On an explicitly authorized, already-rooted XPad2:
 The extractor reads only the preloader mapper and LK block devices. It does not
 write Android partitions and refuses to overwrite local output files.
 
-## Privacy and redistribution
+## Privacy and scope
 
 Do not publish NVRAM, NVData, proinfo, persist, seccfg, efuse, OTP, userdata,
 vendor logs, raw GPT images, unique GUIDs, serial numbers, MAC addresses, or
@@ -69,8 +68,8 @@ calibration data.
 
 Repository-authored documentation and tools are MIT-licensed. OEM firmware remains
 the property of its respective rights holders and the two release assets are not
-MIT-licensed. This release does not authorize distribution of other OEM firmware
-or any device-unique data.
+MIT-licensed. Other OEM firmware and device-unique data are outside the scope of
+this release.
 
 Writing preloader or LK is a high-risk operation. A correct checksum does not make
 these images portable across products or board revisions, and a wrong preloader
