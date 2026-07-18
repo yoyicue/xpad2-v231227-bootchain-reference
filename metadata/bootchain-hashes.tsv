@@ -7,6 +7,8 @@ lk_a.img	V231227	8388608	a87979a827c005107c68395c88396ce14a418dff0a23f89d473797e
 lk_b.img	V231227	8388608	2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74	all-zero-do-not-use
 lk_a-build-20240813-observed.img	suspected-V240813	8388608	ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf	published-ls12-lk-2024-observed-r1-provisional-version
 lk_b-build-20241216-observed.img	V241216-era	8388608	c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419	published-ls12-lk-2024-observed-r1-provisional-version
+preloader-v260523-ota-payload.img	V260523	495616	cede4da9c9a4ec48914fa8eb321e686e6176617227c44df5fbe0d941c77e4aa7	source-ota-payload-zero-padded-for-release
+preloader_raw_a-v260523.img	V260523	4190208	97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b	published-ls12-lk-v260523-r1-confirmed-version
 lk-v260523-ota-payload.img	V260523	1261568	9e987c2359982f0b2cabbf1e0fb756dd156d3af67f5cb8c423bad3fc9cd2139d	source-ota-payload-zero-padded-for-release
 lk_a-v260523.img	V260523	8388608	6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a	published-ls12-lk-v260523-r1-confirmed-version
 lk_b-v260629-observed.img	V260629	8388608	4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e	observed-live-comparison-hash-only

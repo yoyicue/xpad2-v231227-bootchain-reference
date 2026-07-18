@@ -28,6 +28,9 @@ xpad_classify_hash() {
     6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a)
       printf 'confirmed V260523 lk_a'
       ;;
+    97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b)
+      printf 'confirmed V260523 preloader raw A'
+      ;;
     4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e)
       printf 'observed V260629 lk_b comparison image'
       ;;

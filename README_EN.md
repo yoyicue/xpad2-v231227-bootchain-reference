@@ -61,15 +61,15 @@ all-zero V231227 `lk_b.img` is unusable and is not published. The released
 `preloader_raw_a.img` is the 4,190,208-byte raw mapper read, not the 4,194,304-byte
 boot-LUN dump; do not infer a write format from its filename or mix the two forms.
 
-## V260523 LK download
+## V260523 boot-chain download
 
 The [`ls12-lk-v260523-r1` release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-v260523-r1)
-provides the version-confirmed
-[`lk_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/lk_a-v260523.img):
+combines the version-confirmed preloader and LK samples:
 
 | Asset | Bytes | SHA-256 |
 | --- | ---: | --- |
-| `lk_a-v260523.img` | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` |
+| [`preloader_raw_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/preloader_raw_a-v260523.img) | 4,190,208 | `97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b` |
+| [`lk_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/lk_a-v260523.img) | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` |
 
 The version is supported by the official V260523 A/B OTA (incremental `239`)
 and LK Build ID
@@ -77,6 +77,12 @@ and LK Build ID
 `lk.img` is 1,261,568 bytes with SHA-256
 `9e987c2359982f0b2cabbf1e0fb756dd156d3af67f5cb8c423bad3fc9cd2139d`.
 Zero-padding it to 8 MiB exactly matches the device slot-A partition image.
+
+The OTA `preloader_raw.img` is 495,616 bytes with SHA-256
+`cede4da9c9a4ec48914fa8eb321e686e6176617227c44df5fbe0d941c77e4aa7`.
+Zero-padding it to the 4,190,208-byte mapper raw format produces the released
+image and exactly matches the device slot-A read. This is not a 4,194,304-byte
+boot-LUN dump.
 
 ## LS12 2024 LK observation samples
 

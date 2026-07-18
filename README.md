@@ -49,6 +49,7 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 | `lk_b.img` | 8,388,608 | `2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74` | V231227 全零，禁止使用 |
 | `lk_a-build-20240813-observed.img` | 8,388,608 | `ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf` | 疑似 V240813；观察样本 |
 | `lk_b-build-20241216-observed.img` | 8,388,608 | `c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419` | V241216 时期；观察样本 |
+| `preloader_raw_a-v260523.img` | 4,190,208 | `97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b` | V260523，版本号已确认 |
 | `lk_a-v260523.img` | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` | V260523，版本号已确认 |
 | `lk_b-v260629-observed.img` | 8,388,608 | `4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e` | V260629 设备实读对比哈希，不分发镜像 |
 
@@ -69,20 +70,26 @@ LS12 LK 样本之间的静态差异，以及从用户自己设备只读提取启
 读取所得的 4,190,208 字节 raw 镜像，不是 4,194,304 字节的 boot-LUN dump，
 两种格式不能按文件名猜测或混用。
 
-## V260523 LK 下载
+## V260523 启动链下载
 
 [`ls12-lk-v260523-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-v260523-r1)
-提供版本号已确认的 [`lk_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/lk_a-v260523.img)：
+合并提供版本号已确认的 preloader 与 LK：
 
 | 附件 | 字节 | SHA-256 |
 | --- | ---: | --- |
-| `lk_a-v260523.img` | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` |
+| [`preloader_raw_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/preloader_raw_a-v260523.img) | 4,190,208 | `97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b` |
+| [`lk_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/lk_a-v260523.img) | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` |
 
 版本证据来自 V260523 官方 A/B OTA（incremental `239`）和 LK 内部 Build ID
 `ls12_mt8797_wifi_64-dfde152c-20241118095326-20260523165450`。OTA payload
 中的原始 `lk.img` 为 1,261,568 字节，SHA-256 为
 `9e987c2359982f0b2cabbf1e0fb756dd156d3af67f5cb8c423bad3fc9cd2139d`；按分区
 格式补零到 8 MiB 后，与设备 A 槽实读镜像哈希完全一致。
+
+OTA payload 中的 `preloader_raw.img` 为 495,616 字节，SHA-256 为
+`cede4da9c9a4ec48914fa8eb321e686e6176617227c44df5fbe0d941c77e4aa7`；补零到
+mapper raw 格式的 4,190,208 字节后，所得发布镜像同样与设备 A 槽实读哈希
+完全一致。这里发布的是 mapper raw 形式，不是 4,194,304 字节 boot-LUN dump。
 
 ## LS12 2024 LK 观察样本
 
