@@ -5,4 +5,6 @@ preloader_a_lun.img	V231227	4194304	304a9757cd859cc437326e678e5f664a30026826e318
 preloader_b_lun.img	V231227	4194304	304a9757cd859cc437326e678e5f664a30026826e318866c9c31e5d9d435694e	hash-only-not-published
 lk_a.img	V231227	8388608	a87979a827c005107c68395c88396ce14a418dff0a23f89d473797e1476b3296	published-v231227-r2-valid-legacy-lk
 lk_b.img	V231227	8388608	2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74	all-zero-do-not-use
-lk_b-v260.img	V260629	8388608	4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e	comparison-hash-only
+lk_a-build-20240813-observed.img	suspected-V240813	8388608	ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf	published-ls12-lk-2024-observed-r1-provisional-version
+lk_b-build-20241216-observed.img	V241216-era	8388608	c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419	published-ls12-lk-2024-observed-r1-provisional-version
+lk_b-v260629-observed.img	V260629	8388608	4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e	observed-live-comparison-hash-only

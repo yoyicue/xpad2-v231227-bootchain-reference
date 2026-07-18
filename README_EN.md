@@ -3,10 +3,9 @@
 This repository documents the V231227 boot chain used by TALIH-PD2 / XPad2.
 It is intended for same-model ROM, recovery, and bootloader research.
 
-The repository contains sanitized metadata, known hashes, an LK comparison, and
-read-only owner-extraction tools. Two unmodified V231227 reference images are
-available separately in the `v231227-r2` release. No flashing automation is
-included.
+The repository contains sanitized metadata, known hashes, LK comparisons, and
+read-only owner-extraction tools. Firmware samples are distributed only as
+separate release assets. No flashing automation is included.
 
 ## Scope
 
@@ -14,7 +13,9 @@ included.
 - Platform: `ls12_mt8797_wifi_64`
 - SoC family: MediaTek MT8797
 - Legacy firmware: V231227, Android 13
-- Compared firmware: V260629, incremental `260`
+- Compared firmware: V260629, incremental `260`, observed from device slot B
+- Additional samples: LS12 LK builds dated 2024-08-13 and 2024-12-16, with
+  provisional version attribution
 
 These files are not portable to another model merely because it uses the same SoC.
 DRAM, UFS, PMIC, panel, partition layout, rollback state, and signing roots can all
@@ -26,8 +27,13 @@ differ.
 - The captured V231227 `lk_b.img` is an all-zero 8 MiB partition and must not be
   treated as a bootloader image.
 - V231227 preloader raw A and B images are byte-identical.
-- The observed V260 LK retains fastboot initialization and read/control commands,
-  but no longer contains the canonical `flash:` or `erase:` command strings.
+- The observed V260629 slot-B LK retains fastboot initialization and read/control
+  commands, but no longer contains the canonical `flash:` or `erase:` command
+  strings. This establishes that the standard command entries are absent; it does
+  not establish that every low-level storage-write helper was removed.
+- Both 2024 LS12 observation samples retain `flash:` and `erase:`, but they came
+  from a mixed-slot device backup and must not be identified as V260213 merely
+  from the archive directory name.
 - The A/B LK partition sizes and layout did not change.
 
 See [the LK comparison](reports/lk-v231227-vs-v260.md) and
@@ -47,6 +53,23 @@ contains exactly these firmware assets:
 all-zero V231227 `lk_b.img` is unusable and is not published. The released
 `preloader_raw_a.img` is the 4,190,208-byte raw mapper read, not the 4,194,304-byte
 boot-LUN dump; do not infer a write format from its filename or mix the two forms.
+
+## LS12 2024 LK observation samples
+
+The [`ls12-lk-2024-observed-r1` release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-2024-observed-r1)
+contains two LK samples from one mixed-slot device backup:
+
+| Asset | SHA-256 | Internal build date | Provisional attribution |
+| --- | --- | --- | --- |
+| [`lk_a-build-20240813-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_a-build-20240813-observed.img) | `ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf` | 2024-08-13 | suspected V240813, medium confidence; original `lk_a` |
+| [`lk_b-build-20241216-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_b-build-20241216-observed.img) | `c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419` | 2024-12-16 | V241216-era, high confidence; original `lk_b` |
+
+The paired system reports `ro.genie.gota.version=V241216`, and the `lk_b`,
+`boot_b`, and `vendor_b` build times converge on 2024-12-16. Only the internal
+Build ID supports the 2024-08-13 attribution for `lk_a`. The source is not an OTA
+package with authoritative update metadata, so the assets use `observed` naming.
+Their SHA-256 values remain the stable identities if later evidence refines the
+version labels.
 
 ## Owner extraction
 
