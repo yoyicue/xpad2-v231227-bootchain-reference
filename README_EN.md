@@ -39,6 +39,8 @@ differ.
 - The confirmed V260523 LK also retains `flash:` and `erase:`. Zero-padding the
   official OTA LK to the 8 MiB partition size exactly reproduces the slot-A
   image read from the device.
+- Among currently confirmed samples, V260523 is the last LS12 version that still
+  retains these two standard Fastboot command entries; V260629 has removed them.
 - The removal is therefore currently bounded to the interval after V260523 and
   by V260629; it is inaccurate to describe every V260 build as restricted.
 - The A/B LK partition sizes and layout did not change.
@@ -65,6 +67,9 @@ boot-LUN dump; do not infer a write format from its filename or mix the two form
 
 The [`ls12-lk-v260523-r1` release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-v260523-r1)
 combines the version-confirmed preloader and LK samples:
+
+Among currently confirmed samples, V260523 is the last LS12 release retaining
+the Fastboot `flash:` and `erase:` command entries; V260629 has removed them.
 
 | Asset | Bytes | SHA-256 |
 | --- | ---: | --- |
