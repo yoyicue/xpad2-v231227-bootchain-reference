@@ -36,6 +36,15 @@ if rg -n -i \
   xpad_fail 'device identity field found'
 fi
 
+printf 'checking for local absolute paths\n'
+if rg -n \
+  '/Users/|/Volumes/|/home/[[:alnum:]_.-]+/' \
+  "${xpad_repo_dir}" \
+  --glob '!tools/publication-audit.sh' \
+  --glob '!.git/**'; then
+  xpad_fail 'local absolute path found'
+fi
+
 printf 'checking scripts\n'
 bash -n "${xpad_repo_dir}/tools/extract-own-device.sh"
 bash -n "${xpad_repo_dir}/tools/classify-images.sh"

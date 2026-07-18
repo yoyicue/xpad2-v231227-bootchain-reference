@@ -3,8 +3,8 @@
 This repository documents the V231227 boot chain used by TALIH-PD2 / XPad2.
 It is intended for same-model ROM, recovery, and bootloader research.
 
-The repository contains sanitized metadata, known hashes, LK comparisons, and
-read-only owner-extraction tools. Firmware samples are distributed only as
+The repository contains sanitized metadata, known hashes, Preloader/LK comparisons,
+and read-only owner-extraction tools. Firmware samples are distributed only as
 separate release assets. No flashing automation is included.
 
 ## Scope
@@ -24,29 +24,69 @@ These files are not portable to another model merely because it uses the same So
 DRAM, UFS, PMIC, panel, partition layout, rollback state, and signing roots can all
 differ.
 
+## Boot-chain evolution overview
+
+The repository no longer treats the evidence as only an “old V231227” versus a
+generic “V260” comparison. It follows five incrementals from the same LS12 product
+line:
+
+```text
+1703659196 → 1723478295 → 19 → 239 → 260
+   V231227    2024 slot A  V241216  V260523  V260629
+```
+
+Incremental `1723478295` is tied to the retained slot A and a 2024-08-13 LK Build
+ID. V240813 is a high-confidence inference, not a directly confirmed product
+version. Incrementals `19`, `239`, and `260` are confirmed as V241216, V260523,
+and V260629 respectively.
+
+| Stage | Preloader entry policy | LK Fastboot capability | Interpretation |
+| --- | --- | --- | --- |
+| `1703659196` | Accepts early `FASTBOOT`, acknowledges with `TOOBTSAF`, sets mode 99 | Retains `flash:` and `erase:` | Full baseline |
+| `1723478295` | Same early entry path | Same command surface | Minor rebuild; stable capability |
+| `19` | Same early entry path | Same command surface | V241216 baseline |
+| `239` | Executable code matches `19`; GFH security field and signatures change | Same source-revision marker as `19`; write/erase entries remain | Last confirmed full sample |
+| `260` | Recognizes early `FASTBOOT` but rejects it for the user build and no longer switches mode | Standard `flash:` / `erase:` registrations removed; storage backends remain | Both layers restricted |
+
+The confirmed transition is therefore not “every V260 build is trimmed.” It is a
+coordinated restriction introduced after V260523 / incremental `239` and by
+V260629 / incremental `260`: the preloader's early Fastboot entry and LK's standard
+write/erase command entries are both restricted. Missing 2025 dumps do not change
+this 37-day bound, but they limit claims about every intermediate build.
+
 ## Findings
 
 - The usable V231227 bootloader is `lk_a.img`.
 - The captured V231227 `lk_b.img` is an all-zero 8 MiB partition and must not be
   treated as a bootloader image.
 - V231227 preloader raw A and B images are byte-identical.
+- The V231227, two 2024-observed, and V260523 preloaders acknowledge the early
+  BLDR `FASTBOOT` token with `TOOBTSAF` and set the Fastboot boot mode. V260629
+  instead reports `user version not supported`, sends no acknowledgement, and
+  no longer sets that mode.
 - The confirmed V260629 slot-B LK retains fastboot initialization and read/control
   commands, but no longer contains the canonical `flash:` or `erase:` command
   strings. This establishes that the standard command entries are absent; it does
-  not establish that every low-level storage-write helper was removed.
+  not establish that every low-level storage-write helper was removed. Paths such
+  as `storage_write`, `storage_erase`, `partition_write`, and the UFS/eMMC backends
+  remain present.
 - The current V241216 slot-B LK and retained older slot-A LK both preserve
   `flash:` and `erase:`. Slot B is confirmed as V241216 / incremental `19`;
   slot A is strongly suspected V240813.
 - The confirmed V260523 LK also retains `flash:` and `erase:`. Zero-padding the
   official OTA LK to the 8 MiB partition size exactly reproduces the slot-A
   image read from the device.
-- Among currently confirmed samples, V260523 is the last LS12 version that still
-  retains these two standard Fastboot command entries; V260629 has removed them.
-- The removal is therefore currently bounded to the interval after V260523 and
-  by V260629; it is inaccurate to describe every V260 build as restricted.
+- Among current samples, V260523 is the last confirmed LS12 version retaining
+  both the preloader's early Fastboot entry and LK's standard `flash:` / `erase:`
+  entries. V260629 restricts both layers.
+- Both changes are bounded to after V260523 / incremental `239` and by V260629 /
+  incremental `260`, a 37-day window. Missing 2025 dumps do not affect this bound,
+  but they prevent claims about every intermediate build.
 - The A/B LK partition sizes and layout did not change.
 
-See [the LK comparison](reports/lk-v231227-vs-v260.md) and
+See [the five-sample boot-chain evolution report](reports/bootchain-evolution-1703659196-to-260.md),
+[the BootROM / Preloader verification report](reports/bootrom-preloader-verification.md),
+[the LK comparison](reports/lk-v231227-vs-v260.md), and
 [machine-readable hashes](metadata/bootchain-hashes.tsv).
 
 ## V231227 LS12 boot-chain downloads
@@ -70,8 +110,9 @@ boot-LUN dump; do not infer a write format from its filename or mix the two form
 The [`ls12-lk-v260523-r1` release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-v260523-r1)
 combines the version-confirmed preloader and LK samples:
 
-Among currently confirmed samples, V260523 is the last LS12 release retaining
-the Fastboot `flash:` and `erase:` command entries; V260629 has removed them.
+Among current samples, V260523 is the last confirmed LS12 release retaining both
+the preloader's early Fastboot entry and LK's `flash:` / `erase:` entries;
+V260629 restricts both layers.
 
 | Asset | Bytes | SHA-256 |
 | --- | ---: | --- |
@@ -96,11 +137,13 @@ boot-LUN dump.
 The [`ls12-v260629-restricted-fastboot-r1` release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-v260629-restricted-fastboot-r1)
 provides the version-confirmed V260629 preloader and LK:
 
-This is the “trimmed” sample discussed here: LK still retains Fastboot
-initialization, `getvar:`, `download:`, `boot`, `continue`, reboot, and slot-control
-entries, while the standard `flash:` and `erase:` command registrations are gone.
-“Trimmed” refers specifically to the standard Fastboot write/erase command surface;
-it does not mean that Fastboot or every low-level storage helper was removed.
+This is the restricted-Fastboot sample discussed here. The preloader still
+recognizes the early `FASTBOOT` token but reports that the user build is unsupported,
+sends no `TOOBTSAF` acknowledgement, and no longer sets Fastboot boot mode. LK still
+retains Fastboot initialization, `getvar:`, `download:`, `boot`, `continue`, reboot,
+and slot-control entries, while the standard `flash:` and `erase:` registrations
+are gone. “Restricted” does not mean that Fastboot, DA authentication, or every
+low-level storage helper was removed.
 
 | Asset | Bytes | SHA-256 |
 | --- | ---: | --- |

@@ -1,5 +1,5 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "product": "TALIH-PD2",
   "family": "XPad2",
   "platform": "ls12_mt8797_wifi_64",
@@ -32,6 +32,20 @@
     "fastboot_standard_write_entries_absent": [
       "flash:",
       "erase:"
+    ],
+    "preloader_early_fastboot_request": {
+      "request": "FASTBOOT",
+      "behavior": "recognized-but-rejected-on-user-build",
+      "log": "%s user version not supported",
+      "acknowledgement_sent": false,
+      "fastboot_boot_mode_99_set": false
+    },
+    "lk_storage_backends_still_present": [
+      "storage_write",
+      "storage_erase",
+      "partition_write",
+      "emmc_write",
+      "cmd_erase_mmc"
     ]
   },
   "confirmed_preloader_samples": [
@@ -45,7 +59,12 @@
       "ota_payload_sha256": "cede4da9c9a4ec48914fa8eb321e686e6176617227c44df5fbe0d941c77e4aa7",
       "mapper_raw_bytes": 4190208,
       "mapper_raw_sha256": "97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b",
-      "source_consistency": "official OTA payload zero-padded to mapper raw size matches read-only live-device pl_a"
+      "source_consistency": "official OTA payload zero-padded to mapper raw size matches read-only live-device pl_a",
+      "early_fastboot_request": {
+        "request": "FASTBOOT",
+        "acknowledgement": "TOOBTSAF",
+        "fastboot_boot_mode_99_set": true
+      }
     },
     {
       "release_asset": "preloader_raw_b-v260629.img",
@@ -57,7 +76,14 @@
       "ota_payload_sha256": "5b92e1a56ec6705194fcdbdc18559bebb2c7d743f0e832fa3e9e16ba6769203c",
       "mapper_raw_bytes": 4190208,
       "mapper_raw_sha256": "76e76d566b48d21387daabc7cbd2e972782995cebd4c07cd01cc5e3e823636f4",
-      "source_consistency": "official OTA payload zero-padded to mapper raw size matches read-only live-device pl_b on two devices"
+      "source_consistency": "official OTA payload zero-padded to mapper raw size matches read-only live-device pl_b on two devices",
+      "early_fastboot_request": {
+        "request": "FASTBOOT",
+        "behavior": "recognized-but-rejected-on-user-build",
+        "log": "%s user version not supported",
+        "acknowledgement_sent": false,
+        "fastboot_boot_mode_99_set": false
+      }
     }
   ],
   "confirmed_lk_samples": [
@@ -93,6 +119,13 @@
       "fastboot_standard_write_entries_absent": [
         "flash:",
         "erase:"
+      ],
+      "storage_backends_still_present": [
+        "storage_write",
+        "storage_erase",
+        "partition_write",
+        "emmc_write",
+        "cmd_erase_mmc"
       ]
     }
   ],
