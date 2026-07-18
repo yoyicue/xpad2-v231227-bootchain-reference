@@ -1,0 +1,17 @@
+# OEM firmware and device captures are never tracked by default.
+*.img
+*.bin
+*.raw
+*.dump
+*.tar
+*.tar.*
+*.zip
+*.7z
+*.partial
+artifacts/
+captures/
+
+# Local extraction output and editor files.
+my-xpad2-bootchain/
+.DS_Store
+*.swp

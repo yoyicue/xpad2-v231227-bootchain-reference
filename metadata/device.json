@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "product": "TALIH-PD2",
+  "family": "XPad2",
+  "platform": "ls12_mt8797_wifi_64",
+  "soc_family": "MediaTek MT8797",
+  "legacy_firmware": {
+    "version": "V231227",
+    "android_release": 13,
+    "build_incremental": "1703659196",
+    "kernel_release": "4.19.191+",
+    "kernel_build_date": "2023-12-27",
+    "lk_build_id": "ls12_mt8797_wifi_64-7003d180-20231215183929-20231227154745"
+  },
+  "comparison_firmware": {
+    "version": "V260629",
+    "build_incremental": "260",
+    "lk_build_id": "ls12_mt8797_wifi_64-405e7a01-20260602101307-20260629041106"
+  },
+  "privacy": {
+    "device_serial_included": false,
+    "disk_guids_included": false,
+    "device_unique_partitions_included": false,
+    "firmware_blobs_included": false
+  }
+}

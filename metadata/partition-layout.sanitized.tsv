@@ -1,0 +1,5 @@
+name	slot	block_device	sectors	bytes	start_sector	privacy
+preloader_raw_a	a	/dev/block/mapper/pl_a	8184	4190208	unknown	no-guid
+preloader_raw_b	b	/dev/block/mapper/pl_b	8184	4190208	unknown	no-guid
+lk_a	a	/dev/block/sdc38	16384	8388608	1345536	no-guid
+lk_b	b	/dev/block/sdc55	16384	8388608	1873920	no-guid
