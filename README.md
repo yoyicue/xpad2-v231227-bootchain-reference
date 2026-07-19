@@ -1,9 +1,6 @@
 # XPad2 V231227 启动链参考资料
 
-这是 TALIH-PD2 / XPad2 的 V231227 启动链研究资料库，面向同型号 ROM、恢复和
-bootloader 研究。仓库公开脱敏元数据、已知镜像哈希、V231227 与观察到的
-LS12 Preloader / LK 样本之间的静态差异，以及从用户自己设备只读提取启动链
-镜像的工具。
+这是 TALIH-PD2 / XPad2 的 V231227 启动链研究资料库，面向同型号 ROM、恢复和 bootloader 研究。仓库公开脱敏元数据、已知镜像哈希、V231227 与观察到的 LS12 Preloader / LK 样本之间的静态差异，以及从用户自己设备只读提取启动链镜像的工具。
 
 ## 适用范围
 
@@ -16,24 +13,20 @@ LS12 Preloader / LK 样本之间的静态差异，以及从用户自己设备只
 | 旧内核 | `4.19.191+`，2023-12-27 构建 |
 | 已确认中间版本 | V260523，incremental `239`，官方 OTA 与设备 A 槽交叉验证 |
 | 受限 Fastboot 固件 | V260629，incremental `260`，官方 OTA 与设备 B 槽交叉验证 |
-| V241216 混合槽位样本 | 当前 B 槽：V241216 / incremental `19`；旧 A 槽：疑似 V240813 / incremental `1723478295` |
+| V241216 混合槽位样本 | 当前 B 槽：V241216 / incremental `19`；旧 A 槽：V240813（推定） / incremental `1723478295` |
 
-这些资料不能跨型号直接使用。即使 SoC 相同，DRAM、UFS、PMIC、显示面板、
-签名链和分区布局也可能不同。
+这些资料不能跨型号直接使用。即使 SoC 相同，DRAM、UFS、PMIC、显示面板、签名链和分区布局也可能不同。
 
 ## 启动链变迁概览
 
-本仓库不再把样本简单分成“V231227 旧版”和“V260 新版”，而是沿下面五个
-incremental 观察同一 LS12 产品线的连续变化：
+本仓库不再把样本简单分成“V231227 旧版”和“V260 新版”，而是沿下面五个 incremental 观察同一 LS12 产品线的连续变化：
 
 ```text
 1703659196 → 1723478295 → 19 → 239 → 260
-   V231227      2024 A槽    V241216  V260523  V260629
+   V231227      2024 A 槽   V241216  V260523  V260629
 ```
 
-其中 `1723478295` 只有槽位描述符和 2024-08-13 LK Build ID 支持，版本高度疑似
-V240813，但仍没有直接的 A 侧产品版本属性。`19`、`239`、`260` 分别已确认对应
-V241216、V260523、V260629。
+其中 `1723478295` 只有槽位描述符和 2024-08-13 LK Build ID 支持，统一记为 `V240813（推定）`，仍没有直接的 A 侧产品版本属性。`19`、`239`、`260` 分别已确认对应 V241216、V260523、V260629。
 
 | 阶段 | Preloader 进入策略 | LK Fastboot 能力 | 判断 |
 | --- | --- | --- | --- |
@@ -43,49 +36,33 @@ V241216、V260523、V260629。
 | `239` | 与 `19` 执行代码相同；GFH 安全字段及签名变化 | 与 `19` 同一源码修订标识，仍保留写擦入口 | 最后一份已确认完整样本 |
 | `260` | 识别早期 `FASTBOOT` 后报告 user build 不支持，不再切换模式 | 删除标准 `flash:`、`erase:` 注册入口；底层写擦后端仍在 | 两层受限 Fastboot |
 
-所以已确认的核心变迁不是“V260 全部阉割”，而是 **V260523 / incremental
-`239` 之后、V260629 / incremental `260` 之时，Preloader 的早期进入入口与 LK
-的标准写入/擦除入口同时收紧**。缺少 2025 年若干 dump 不影响这个 37 天窗口，
-但仍限制了我们对所有中间构建的连续性结论。
+所以已确认的核心变迁不是“V260 全部阉割”，而是 **V260523 / incremental `239` 之后、V260629 / incremental `260` 之时，Preloader 的早期进入入口与 LK 的标准写入/擦除入口同时收紧**。缺少 2025 年若干 dump 不影响这个 37 天窗口，但仍限制了我们对所有中间构建的连续性结论。
 
 ## 已确认的关键事实
 
 - V231227 备份中有效的旧 LK 是 `lk_a.img`。
 - V231227 的 `lk_b.img` 是完整的 8 MiB 全零镜像，不能作为 bootloader 使用。
 - V231227 的 preloader raw A/B 镜像逐字节相同。
-- V231227、两份 2024 观察样本和 V260523 的 preloader 在收到早期 BLDR
-  `FASTBOOT` 令牌后会回送 `TOOBTSAF` 并设置 Fastboot boot mode；V260629
-  改为报告 `user version not supported`，不再回 ACK 或设置该模式。
-- 已确认的 V260629 B 槽 LK 仍保留 fastboot 初始化、`getvar:`、`download:`、
-  `boot`、`continue`、`reboot-bootloader`、`reboot-fastboot` 和 `set_active:`。
-- 该 V260629 LK 不再包含标准 `flash:`、`erase:` 命令字符串；这证明标准命令
-  入口未注册。`storage_write`、`storage_erase`、`partition_write` 和 UFS/eMMC
-  写擦路径仍然存在，因此不能表述为“全部写入能力被删除”。
-- V241216 当前 B 槽和保留旧 A 槽的 LK 均保留标准 `flash:`、`erase:`；B 槽
-  V241216 / incremental `19` 已确认，A 槽高度疑似 V240813。
-- 版本号已确认的 V260523 LK 也保留 `flash:`、`erase:`；官方 OTA 中的 LK
-  补零到 8 MiB 后，与设备 A 槽实读镜像逐字节相同。
-- 截至现有样本，V260523 是最后一份确认同时保留 Preloader 早期 Fastboot 入口
-  和 LK 标准 `flash:`、`erase:` 入口的 LS12 版本；V260629 已同时收紧两层。
-- 两层变化都可定位到 V260523 / incremental `239` 之后、V260629 /
-  incremental `260` 之时。缺少 2025 dump 不影响这个 37 天窗口，但不能据此
-  断言 2025 每一版都完全相同。
+- V231227、两份 2024 观察样本和 V260523 的 preloader 在收到早期 BLDR `FASTBOOT` 令牌后会回送 `TOOBTSAF` 并设置 Fastboot boot mode；V260629 改为报告 `user version not supported`，不再回 ACK 或设置该模式。
+- 已确认的 V260629 B 槽 LK 仍保留 fastboot 初始化、`getvar:`、`download:`、`boot`、`continue`、`reboot-bootloader`、`reboot-fastboot` 和 `set_active:`。
+- 该 V260629 LK 不再包含标准 `flash:`、`erase:` 命令字符串；这证明标准命令入口未注册。`storage_write`、`storage_erase`、`partition_write` 和 UFS/eMMC 写擦路径仍然存在，因此不能表述为“全部写入能力被删除”。
+- V241216 当前 B 槽和保留旧 A 槽的 LK 均保留标准 `flash:`、`erase:`；B 槽 V241216 / incremental `19` 已确认，A 槽记为 `V240813（推定）`。
+- 版本号已确认的 V260523 LK 也保留 `flash:`、`erase:`；官方 OTA 中的 LK 补零到 8 MiB 后，与设备 A 槽实读镜像逐字节相同。
+- 截至现有样本，V260523 是最后一份确认同时保留 Preloader 早期 Fastboot 入口和 LK 标准 `flash:`、`erase:` 入口的 LS12 版本；V260629 已同时收紧两层。
+- 两层变化都可定位到 V260523 / incremental `239` 之后、V260629 / incremental `260` 之时。缺少 2025 dump 不影响这个 37 天窗口，但不能据此断言 2025 每一版都完全相同。
 - LK 分区大小和 A/B 布局未改变；变化发生在 LK 程序和签名内容中。
 
-详细证据见
-[五版本启动链演变报告](reports/bootchain-evolution-1703659196-to-260.md)和
-[BootROM / Preloader 验证逻辑](reports/bootrom-preloader-verification.md)，以及
-[LK 差异报告](reports/lk-v231227-vs-v260.md)。
+详细证据见 [五版本启动链演变报告](reports/bootchain-evolution-1703659196-to-260.md)和 [BootROM / Preloader 验证逻辑](reports/bootrom-preloader-verification.md)，以及 [LK 差异报告](reports/lk-v231227-vs-v260.md)。
 
 ## 已知哈希
 
 | 镜像 | 字节 | SHA-256 | 说明 |
-| --- | ---: | --- | --- |
+| --- | --: | --- | --- |
 | `preloader_raw_a.img` | 4,190,208 | `ee05973a30f3fd4a6f1ca344856784f96e7a6b630333ba25dc776205d3713f11` | V231227 |
 | `preloader_raw_b.img` | 4,190,208 | `ee05973a30f3fd4a6f1ca344856784f96e7a6b630333ba25dc776205d3713f11` | 与 A 相同 |
 | `lk_a.img` | 8,388,608 | `a87979a827c005107c68395c88396ce14a418dff0a23f89d473797e1476b3296` | V231227 有效旧 LK |
 | `lk_b.img` | 8,388,608 | `2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74` | V231227 全零，禁止使用 |
-| `lk_a-build-20240813-observed.img` | 8,388,608 | `ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf` | 旧 A 槽；incremental `1723478295`，高度疑似 V240813 |
+| `lk_a-build-20240813-observed.img` | 8,388,608 | `ad8f5ea2b16efd60eb72045b35263b8c290dc5b151d75045e78b2af9a83434bf` | 旧 A 槽；V240813（推定） / incremental `1723478295` |
 | `lk_b-build-20241216-observed.img` | 8,388,608 | `c87d7cd3903ceccd82a2fb6f4ac127434091ba0e4691d331511e35bb44654419` | 当前 B 槽；V241216 / incremental `19` 已确认 |
 | `preloader_raw_a-v260523.img` | 4,190,208 | `97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b` | V260523，版本号已确认 |
 | `lk_a-v260523.img` | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` | V260523，版本号已确认 |
@@ -96,92 +73,59 @@ V241216、V260523、V260629。
 
 ## V231227 LS12 启动链下载
 
-[`v231227-r2` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/v231227-r2)
-展示名称为 **XPad2 LS12 V231227 boot-chain images r2**，提供以下两个附件：
+[`v231227-r2` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/v231227-r2) 展示名称为 **XPad2 LS12 V231227 boot-chain images r2**，提供以下两个附件：
 
 | 附件 | 字节 | SHA-256 |
-| --- | ---: | --- |
+| --- | --: | --- |
 | [`preloader_raw_a.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/v231227-r2/preloader_raw_a.img) | 4,190,208 | `ee05973a30f3fd4a6f1ca344856784f96e7a6b630333ba25dc776205d3713f11` |
 | [`lk_a.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/v231227-r2/lk_a.img) | 8,388,608 | `a87979a827c005107c68395c88396ce14a418dff0a23f89d473797e1476b3296` |
 
-`preloader_raw_b.img` 与 A 逐字节相同，因而不重复发布；全零的 V231227
-`lk_b.img` 不能使用，也不会发布。这里的 `preloader_raw_a.img` 是 mapper
-读取所得的 4,190,208 字节 raw 镜像，不是 4,194,304 字节的 boot-LUN dump，
-两种格式不能按文件名猜测或混用。
+`preloader_raw_b.img` 与 A 逐字节相同，因而不重复发布；全零的 V231227 `lk_b.img` 不能使用，也不会发布。这里的 `preloader_raw_a.img` 是 mapper 读取所得的 4,190,208 字节 raw 镜像，不是 4,194,304 字节的 boot-LUN dump，两种格式不能按文件名猜测或混用。
 
 ## V260523 启动链下载
 
-[`ls12-lk-v260523-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-v260523-r1)
-合并提供版本号已确认的 preloader 与 LK：
+[`ls12-lk-v260523-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-v260523-r1) 合并提供版本号已确认的 preloader 与 LK：
 
-截至现有样本，V260523 是最后一份确认仍保留 Preloader 早期 Fastboot 入口及
-LK `flash:`、`erase:` 命令入口的 LS12 版本；V260629 已同时收紧两层。
+截至现有样本，V260523 是最后一份确认仍保留 Preloader 早期 Fastboot 入口及 LK `flash:`、`erase:` 命令入口的 LS12 版本；V260629 已同时收紧两层。
 
 | 附件 | 字节 | SHA-256 |
-| --- | ---: | --- |
+| --- | --: | --- |
 | [`preloader_raw_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/preloader_raw_a-v260523.img) | 4,190,208 | `97cbf6d20e7e9cdffceb52a434bcb7ed5675c4eb055112ee90d2037374d3b54b` |
 | [`lk_a-v260523.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-v260523-r1/lk_a-v260523.img) | 8,388,608 | `6ebc4667ef9c0a6a888bda6d020cd744967e966c63b4d0ee6a07e5a21bce3b6a` |
 
-版本证据来自 V260523 官方 A/B OTA（incremental `239`）和 LK 内部 Build ID
-`ls12_mt8797_wifi_64-dfde152c-20241118095326-20260523165450`。OTA payload
-中的原始 `lk.img` 为 1,261,568 字节，SHA-256 为
-`9e987c2359982f0b2cabbf1e0fb756dd156d3af67f5cb8c423bad3fc9cd2139d`；按分区
-格式补零到 8 MiB 后，与设备 A 槽实读镜像哈希完全一致。
+版本证据来自 V260523 官方 A/B OTA（incremental `239`）和 LK 内部 Build ID `ls12_mt8797_wifi_64-dfde152c-20241118095326-20260523165450`。OTA payload 中的原始 `lk.img` 为 1,261,568 字节，SHA-256 为 `9e987c2359982f0b2cabbf1e0fb756dd156d3af67f5cb8c423bad3fc9cd2139d`；按分区格式补零到 8 MiB 后，与设备 A 槽实读镜像哈希完全一致。
 
-OTA payload 中的 `preloader_raw.img` 为 495,616 字节，SHA-256 为
-`cede4da9c9a4ec48914fa8eb321e686e6176617227c44df5fbe0d941c77e4aa7`；补零到
-mapper raw 格式的 4,190,208 字节后，所得发布镜像同样与设备 A 槽实读哈希
-完全一致。这里发布的是 mapper raw 形式，不是 4,194,304 字节 boot-LUN dump。
+OTA payload 中的 `preloader_raw.img` 为 495,616 字节，SHA-256 为 `cede4da9c9a4ec48914fa8eb321e686e6176617227c44df5fbe0d941c77e4aa7`；补零到 mapper raw 格式的 4,190,208 字节后，所得发布镜像同样与设备 A 槽实读哈希完全一致。这里发布的是 mapper raw 形式，不是 4,194,304 字节 boot-LUN dump。
 
 ## V260629 受限 Fastboot 启动链下载
 
-[`ls12-v260629-restricted-fastboot-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-v260629-restricted-fastboot-r1)
-提供版本号已确认的 V260629 preloader 与 LK：
+[`ls12-v260629-restricted-fastboot-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-v260629-restricted-fastboot-r1) 提供版本号已确认的 V260629 preloader 与 LK：
 
-这是本文所称的“受限 Fastboot 版”：Preloader 仍识别早期 `FASTBOOT` 令牌，
-但改为报告 user build 不支持，不再回送 `TOOBTSAF` 或设置 Fastboot boot mode；
-LK 仍保留 Fastboot 初始化、`getvar:`、`download:`、`boot`、`continue`、重启
-和切槽等入口，但标准 `flash:`、`erase:` 注册入口已经移除。这里的“裁剪”不表示
-整个 Fastboot、DA 下载认证或所有底层存储函数都已删除。
+这是本文所称的“受限 Fastboot 版”：Preloader 仍识别早期 `FASTBOOT` 令牌，但改为报告 user build 不支持，不再回送 `TOOBTSAF` 或设置 Fastboot boot mode；LK 仍保留 Fastboot 初始化、`getvar:`、`download:`、`boot`、`continue`、重启和切槽等入口，但标准 `flash:`、`erase:` 注册入口已经移除。这里的“裁剪”不表示整个 Fastboot、DA 下载认证或所有底层存储函数都已删除。
 
 | 附件 | 字节 | SHA-256 |
-| --- | ---: | --- |
+| --- | --: | --- |
 | [`preloader_raw_b-v260629.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-v260629-restricted-fastboot-r1/preloader_raw_b-v260629.img) | 4,190,208 | `76e76d566b48d21387daabc7cbd2e972782995cebd4c07cd01cc5e3e823636f4` |
 | [`lk_b-v260629.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-v260629-restricted-fastboot-r1/lk_b-v260629.img) | 8,388,608 | `4b5f932dee1d3d6f42a23a4f25c058fae7c7c14488b44d5df0959c6c7252f80e` |
 
-版本证据来自 LS12 V260629 官方 A/B OTA（incremental `260`）、LK 内部 Build ID
-`ls12_mt8797_wifi_64-405e7a01-20260602101307-20260629041106`，以及两台设备
-B 槽实读。OTA 中 495,616 字节的 preloader 和 1,257,472 字节的 LK 分别补零
-到 mapper raw / LK 分区大小后，均与设备实读哈希完全一致。preloader 附件是
-4,190,208 字节 mapper raw 形式，不是 boot-LUN dump。
+版本证据来自 LS12 V260629 官方 A/B OTA（incremental `260`）、LK 内部 Build ID `ls12_mt8797_wifi_64-405e7a01-20260602101307-20260629041106`，以及两台设备 B 槽实读。OTA 中 495,616 字节的 preloader 和 1,257,472 字节的 LK 分别补零到 mapper raw / LK 分区大小后，均与设备实读哈希完全一致。preloader 附件是 4,190,208 字节 mapper raw 形式，不是 boot-LUN dump。
 
 ## V241216 当前系统与旧 A 槽 LK
 
-[`ls12-lk-2024-observed-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-2024-observed-r1)
-展示名称为 **XPad2 LS12 V241216 Boot Chain r1**，提供同一整机 dump 中当前
-B 槽与保留旧 A 槽的两份 LK：
+[`ls12-lk-2024-observed-r1` Release](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/tag/ls12-lk-2024-observed-r1) 展示名称为 **XPad2 LS12 V241216 Boot Chain r1**，提供同一整机 dump 中当前 B 槽与保留旧 A 槽的两份 LK：
 
 | 附件 | 原分区 | incremental | 版本判断 |
 | --- | --- | --- | --- |
-| [`lk_a-build-20240813-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_a-build-20240813-observed.img) | 旧 `lk_a` | `1723478295` | 高度疑似 V240813 |
+| [`lk_a-build-20240813-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_a-build-20240813-observed.img) | 旧 `lk_a` | `1723478295` | V240813（推定） |
 | [`lk_b-build-20241216-observed.img`](https://github.com/yoyicue/xpad2-v231227-bootchain-reference/releases/download/ls12-lk-2024-observed-r1/lk_b-build-20241216-observed.img) | 当前 `lk_b` | `19` | V241216 已确认 |
 
-当前系统属性直接报告 `ro.genie.gota.version=V241216` 和
-`ro.build.version.incremental=19`；`boot_b`、`vbmeta_b`、`vbmeta_system_b`、
-`vbmeta_vendor_b` 的签名描述符也均使用 incremental `19`，其构建时间与 `lk_b`
-一致落在 2024-12-16。dump 提供者确认系统界面显示版本为 `V2.4.0`；这是人工来源
-的 UI 产品版本，和镜像内确认的 V241216 / incremental `19` 分开记录。
+当前系统属性直接报告 `ro.genie.gota.version=V241216` 和 `ro.build.version.incremental=19`；`boot_b`、`vbmeta_b`、`vbmeta_system_b`、`vbmeta_vendor_b` 的签名描述符也均使用 incremental `19`，其构建时间与 `lk_b` 一致落在 2024-12-16。dump 提供者确认系统界面显示版本为 `V2.4.0`；这是人工来源的 UI 产品版本，和镜像内确认的 V241216 / incremental `19` 分开记录。
 
-旧 A 槽的 `boot_a`、`vbmeta_a`、`vbmeta_system_a`、`vbmeta_vendor_a` 均记录
-incremental `1723478295`，对应 2024-08-12 23:58:15 CST；`lk_a` 最终构建于
-2024-08-13 02:11:05。它与 V231227 一样使用 Unix 时间戳式 incremental，因而
-高度吻合 V240813，但尚未找到 A 侧直接的 `ro.genie.gota.version=V240813`。
-文件继续使用 `observed` 命名，SHA-256 仍是稳定身份。
+旧 A 槽的 `boot_a`、`vbmeta_a`、`vbmeta_system_a`、`vbmeta_vendor_a` 均记录 incremental `1723478295`，对应 2024-08-12 23:58:15 CST；`lk_a` 最终构建于 2024-08-13 02:11:05。它与 V231227 一样使用 Unix 时间戳式 incremental，因而支持 `V240813（推定）`，但尚未找到 A 侧直接的 `ro.genie.gota.version=V240813`。文件继续使用 `observed` 命名，SHA-256 仍是稳定身份。
 
 ## 从自己的设备提取
 
-设备必须已经具有用户明确授权的 root 访问。工具只读取以下路径，不会写入
-Android 分区：
+设备必须已经具有用户明确授权的 root 访问。工具只读取以下路径，不会写入 Android 分区：
 
 ```text
 /dev/block/mapper/pl_a
@@ -204,8 +148,7 @@ ADB_SERIAL=SERIAL SU_BIN=/system/bin/su \
   ./tools/extract-own-device.sh ./my-xpad2-bootchain
 ```
 
-输出目录会包含镜像、设备端与本地端双重 SHA-256 以及不含序列号的元数据。
-脚本遇到已有目标文件会停止，不会覆盖。
+输出目录会包含镜像、设备端与本地端双重 SHA-256 以及不含序列号的元数据。脚本遇到已有目标文件会停止，不会覆盖。
 
 ## 安全边界
 
@@ -225,15 +168,10 @@ ADB_SERIAL=SERIAL SU_BIN=/system/bin/su \
 
 ## 刷写警告
 
-Preloader 和 LK 属于高风险启动链组件。不同主板或签名链上的镜像可能导致设备
-在屏幕和 USB 初始化之前停止启动。锁定设备还可能在 preloader 阶段拒绝任何
-被修改、重签错误或回滚受限的 LK。
+Preloader 和 LK 属于高风险启动链组件。不同主板或签名链上的镜像可能导致设备在屏幕和 USB 初始化之前停止启动。锁定设备还可能在 preloader 阶段拒绝任何被修改、重签错误或回滚受限的 LK。
 
-本项目不提供刷写命令。任何恢复操作都应先验证精确型号、主板版本、分区大小、
-启动槽、镜像哈希、签名状态和可恢复通道。即使文件校验正确，跨型号、跨主板或
-错误写入 preloader 仍可能造成无法通过屏幕或 USB 恢复的硬砖。
+本项目不提供刷写命令。任何恢复操作都应先验证精确型号、主板版本、分区大小、启动槽、镜像哈希、签名状态和可恢复通道。即使文件校验正确，跨型号、跨主板或错误写入 preloader 仍可能造成无法通过屏幕或 USB 恢复的硬砖。
 
 ## 许可与固件权利
 
-仓库原创文档和工具采用 MIT 许可。各 Release 中的 OEM 镜像不适用 MIT
-许可。其他 OEM 固件和设备唯一数据不在本次发布范围内。
+仓库原创文档和工具采用 MIT 许可。各 Release 中的 OEM 镜像不适用 MIT 许可。其他 OEM 固件和设备唯一数据不在本次发布范围内。
