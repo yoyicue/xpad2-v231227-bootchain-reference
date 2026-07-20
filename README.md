@@ -52,7 +52,7 @@
 - 两层变化都可定位到 V260523 / incremental `239` 之后、V260629 / incremental `260` 之时。缺少 2025 dump 不影响这个 37 天窗口，但不能据此断言 2025 每一版都完全相同。
 - LK 分区大小和 A/B 布局未改变；变化发生在 LK 程序和签名内容中。
 
-详细证据见 [五版本启动链演变报告](reports/bootchain-evolution-1703659196-to-260.md)和 [BootROM / Preloader 验证逻辑](reports/bootrom-preloader-verification.md)，以及 [LK 差异报告](reports/lk-v231227-vs-v260.md)。
+详细证据见 [五版本启动链演变报告](reports/bootchain-evolution-1703659196-to-260.md)、[BootROM / Preloader 验证逻辑](reports/bootrom-preloader-verification.md)和 [LK 差异报告](reports/lk-v231227-vs-v260.md)；真机方法、操作边界与回滚流程见 [LK 降级恢复 Fastboot 报告](reports/lk-downgrade-fastboot-recovery.md)。
 
 ## 已知哈希
 
@@ -170,7 +170,7 @@ ADB_SERIAL=SERIAL SU_BIN=/system/bin/su \
 
 Preloader 和 LK 属于高风险启动链组件。不同主板或签名链上的镜像可能导致设备在屏幕和 USB 初始化之前停止启动。锁定设备还可能在 preloader 阶段拒绝任何被修改、重签错误或回滚受限的 LK。
 
-本项目不提供刷写命令。任何恢复操作都应先验证精确型号、主板版本、分区大小、启动槽、镜像哈希、签名状态和可恢复通道。即使文件校验正确，跨型号、跨主板或错误写入 preloader 仍可能造成无法通过屏幕或 USB 恢复的硬砖。
+本项目不提供自动刷写工具。研究报告可能包含明确标注的手工验证命令，这些命令不是跨设备通用教程。任何恢复操作都应先验证精确型号、主板版本、分区大小、启动槽、镜像哈希、签名状态和可恢复通道。即使文件校验正确，跨型号、跨主板或错误写入 preloader 仍可能造成无法通过屏幕或 USB 恢复的硬砖。
 
 ## 许可与固件权利
 

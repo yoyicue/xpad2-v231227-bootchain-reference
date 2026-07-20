@@ -50,7 +50,7 @@ The confirmed transition is therefore not “every V260 build is trimmed.” It 
 - Both changes are bounded to after V260523 / incremental `239` and by V260629 / incremental `260`, a 37-day window. Missing 2025 dumps do not affect this bound, but they prevent claims about every intermediate build.
 - The A/B LK partition sizes and layout did not change.
 
-See [the five-sample boot-chain evolution report](reports/bootchain-evolution-1703659196-to-260.md), [the BootROM / Preloader verification report](reports/bootrom-preloader-verification.md), [the LK comparison](reports/lk-v231227-vs-v260.md), and [machine-readable hashes](metadata/bootchain-hashes.tsv).
+See [the five-sample boot-chain evolution report](reports/bootchain-evolution-1703659196-to-260.md), [the BootROM / Preloader verification report](reports/bootrom-preloader-verification.md), [the LK comparison](reports/lk-v231227-vs-v260.md), the Chinese [LK downgrade and Fastboot recovery report](reports/lk-downgrade-fastboot-recovery.md), and [machine-readable hashes](metadata/bootchain-hashes.tsv).
 
 ## V231227 LS12 boot-chain downloads
 
@@ -121,4 +121,4 @@ Do not publish NVRAM, NVData, proinfo, persist, seccfg, efuse, OTP, userdata, ve
 
 Repository-authored documentation and tools are MIT-licensed. OEM firmware remains the property of its respective rights holders and release assets are not MIT-licensed. Other OEM firmware and device-unique data are outside the scope of these releases.
 
-Writing preloader or LK is a high-risk operation. A correct checksum does not make these images portable across products or board revisions, and a wrong preloader write can remove both display and USB recovery paths. No flashing command is provided by this project.
+Writing preloader or LK is a high-risk operation. A correct checksum does not make these images portable across products or board revisions, and a wrong preloader write can remove both display and USB recovery paths. This project provides no automated flashing tooling. Research reports may contain explicitly marked manual verification commands; they are not universal instructions for other devices.
